@@ -334,16 +334,16 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
           {/* New Feature: Tinder-Style Celebrity Match Swiping */}
           <div className="md:col-span-2 lg:col-span-1">
              <div 
-               className="bg-white rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-500 border-l-4 border-l-rose-400 relative overflow-hidden"
-               style={{ minHeight: '320px' }}
+               className="bg-white rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-500 border-l-4 border-l-rose-400 relative overflow-hidden h-full flex flex-col"
+               style={{ minHeight: '360px' }}
              >
-                <div className="flex items-center mb-4">
+                <div className="flex items-center mb-4 shrink-0">
                   <span className="text-3xl mr-3">💘</span>
                   <h3 className="text-xl font-bold text-rose-800">今日最配名人</h3>
                 </div>
 
                 {/* Card Container for Swipe Animation */}
-                <div className="relative h-64 w-full">
+                <div className="relative flex-1 w-full">
                   <div 
                     className={`absolute inset-0 transition-all duration-300 ease-out transform ${
                       swipeDirection === 'right' ? 'translate-x-full rotate-12 opacity-0' : 'translate-x-0 rotate-0 opacity-100'
@@ -358,15 +358,15 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
                         </div>
 
                         {/* Info */}
-                        <div className="text-center flex-1">
+                        <div className="text-center flex-1 flex flex-col">
                            <div className="text-2xl font-bold text-rose-500 mb-0 font-handwriting">{currentMatch.name}</div>
                            <div className="text-xs text-rose-300 font-bold uppercase tracking-widest mb-2">{currentMatch.desc}</div>
                            
-                           <div className="bg-white/80 rounded-lg p-2 text-left shadow-sm mb-2">
+                           <div className="bg-white/80 rounded-lg p-2 text-left shadow-sm mb-2 flex-1 overflow-y-auto scrollbar-hide">
                              <p className="text-xs text-stone-600 leading-snug">"{currentMatch.reason}"</p>
                            </div>
 
-                           <div className="flex items-center justify-center mt-auto">
+                           <div className="flex items-center justify-center mt-auto shrink-0 pt-2">
                               <span className="text-xs bg-rose-100 text-rose-500 px-3 py-1 rounded-full border border-rose-200 font-bold">
                                  #{currentMatch.romanticVibe}
                               </span>
@@ -377,7 +377,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
                 </div>
 
                 {/* Social App Style Buttons */}
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-6" data-html2canvas-ignore="true">
+                <div className="flex justify-center gap-6 mt-4 shrink-0" data-html2canvas-ignore="true">
                    <button 
                      onClick={handleNextMatch}
                      className="w-12 h-12 rounded-full bg-white border-2 border-stone-200 text-stone-400 text-xl shadow-sm hover:scale-110 hover:border-red-300 hover:text-red-400 hover:bg-red-50 transition-all flex items-center justify-center"
@@ -396,17 +396,19 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
           </div>
 
           {/* Tarot Flip Card */}
-          <div className="perspective-1000 h-full w-full" onClick={handleTarotFlip}>
+          <div className="perspective-1000 h-full w-full min-h-[360px]" onClick={handleTarotFlip}>
              <div className={`relative w-full h-full transition-all duration-700 transform-style-3d cursor-pointer ${isTarotFlipped ? 'rotate-y-180' : ''}`}>
                 
                 {/* Front (Hidden initially) - The Content */}
                 <div className="rotate-y-180 h-full w-full backface-hidden">
-                   <FortuneCard title="今日幸运塔罗" icon="🃏" colorTheme="purple" delay={400}>
-                      <div className="flex items-start">
-                         <div className="flex-1">
-                            <p className="font-bold text-lg text-purple-700 mb-1">{fortune.tarot.cardName}</p>
-                            <p className="text-sm italic mb-2">"{fortune.tarot.meaning}"</p>
-                            <p className="text-xs bg-purple-50 p-2 rounded-lg text-purple-600">💡 指引: {fortune.tarot.advice}</p>
+                   <FortuneCard title="今日幸运塔罗" icon="🃏" colorTheme="purple" delay={400} className="h-full flex flex-col">
+                      <div className="flex flex-col h-full">
+                         <div className="flex-1 flex flex-col justify-center text-center">
+                            <p className="font-bold text-2xl text-purple-700 mb-2">{fortune.tarot.cardName}</p>
+                            <p className="text-base italic mb-4 text-stone-600">"{fortune.tarot.meaning}"</p>
+                         </div>
+                         <div className="mt-auto">
+                            <p className="text-sm bg-purple-50 p-3 rounded-xl text-purple-600 border border-purple-100 shadow-sm">💡 指引: {fortune.tarot.advice}</p>
                          </div>
                       </div>
                    </FortuneCard>
@@ -428,75 +430,92 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
              </div>
           </div>
 
-          <FortuneCard title={`${fortune.zodiac.sign}的好运`} icon="🌟" colorTheme="orange" delay={200}>
-            <p className="font-bold text-lg mb-1">{fortune.zodiac.luckyTrait}</p>
-            <p className="text-sm mb-3">{fortune.zodiac.compliment}</p>
+          <FortuneCard title={`${fortune.zodiac.sign}的好运`} icon="🌟" colorTheme="orange" delay={200} className="h-full">
+            <div className="flex flex-col h-full justify-center">
+              <p className="font-bold text-lg mb-2">{fortune.zodiac.luckyTrait}</p>
+              <p className="text-sm">{fortune.zodiac.compliment}</p>
+            </div>
           </FortuneCard>
 
-          <FortuneCard title={`属相·${fortune.chineseZodiac.animal}`} icon="🐲" colorTheme="yellow" delay={300}>
-            <p className="font-bold text-lg mb-1">{fortune.chineseZodiac.secretStrength}</p>
-            <p className="text-sm">{fortune.chineseZodiac.compliment}</p>
+          <FortuneCard title={`属相·${fortune.chineseZodiac.animal}`} icon="🐲" colorTheme="yellow" delay={300} className="h-full">
+            <div className="flex flex-col h-full justify-center">
+              <p className="font-bold text-lg mb-2">{fortune.chineseZodiac.secretStrength}</p>
+              <p className="text-sm">{fortune.chineseZodiac.compliment}</p>
+            </div>
           </FortuneCard>
 
-          <FortuneCard title={`人格魅力 (${fortune.mbtiAnalysis.type})`} icon="🧠" colorTheme="blue" delay={500}>
-            <p className="font-bold text-lg mb-1">天赋：{fortune.mbtiAnalysis.superpower}</p>
-            <p className="text-sm">{fortune.mbtiAnalysis.socialVibe}</p>
+          <FortuneCard title={`人格魅力 (${fortune.mbtiAnalysis.type})`} icon="🧠" colorTheme="blue" delay={500} className="h-full">
+            <div className="flex flex-col h-full justify-center">
+              <p className="font-bold text-lg mb-2">天赋：{fortune.mbtiAnalysis.superpower}</p>
+              <p className="text-sm">{fortune.mbtiAnalysis.socialVibe}</p>
+            </div>
           </FortuneCard>
 
-          <FortuneCard title="本命星宿" icon="🌌" colorTheme="yellow" delay={600}>
-            <p className="font-bold text-lg mb-1">{fortune.constellation.starName}</p>
-            <p className="text-sm">{fortune.constellation.guidance}</p>
+          <FortuneCard title="本命星宿" icon="🌌" colorTheme="yellow" delay={600} className="h-full">
+             <div className="flex flex-col h-full justify-center">
+               <p className="font-bold text-lg mb-2">{fortune.constellation.starName}</p>
+               <p className="text-sm">{fortune.constellation.guidance}</p>
+             </div>
           </FortuneCard>
 
-          <FortuneCard title="幸运加持" icon="🍀" colorTheme="orange" delay={700}>
-             <div className="grid grid-cols-3 gap-2 text-center mt-2">
-                <div className="bg-orange-50 p-2 rounded-xl">
+          <FortuneCard title="幸运加持" icon="🍀" colorTheme="orange" delay={700} className="h-full">
+             <div className="grid grid-cols-3 gap-2 text-center mt-auto h-full items-center">
+                <div className="bg-orange-50 p-2 rounded-xl h-full flex flex-col justify-center">
                    <div className="text-xs text-stone-400">颜色</div>
                    <div className="font-bold text-stone-700">{fortune.luckyItems.color}</div>
                 </div>
-                <div className="bg-orange-50 p-2 rounded-xl flex flex-col justify-center">
+                <div className="bg-orange-50 p-2 rounded-xl h-full flex flex-col justify-center">
                    <div className="text-xs text-stone-400 mb-0.5">生命灵数</div>
                    <div className="font-bold text-stone-800 text-xl leading-none">{fortune.luckyItems.number}</div>
-                   {/* Fallback meaning logic if API didn't provide one (local engine does) */}
                    <div className="text-[10px] text-orange-400 scale-90 origin-center mt-1 font-medium">命定能量</div>
                 </div>
-                <div className="bg-orange-50 p-2 rounded-xl">
+                <div className="bg-orange-50 p-2 rounded-xl h-full flex flex-col justify-center">
                    <div className="text-xs text-stone-400">小物</div>
                    <div className="font-bold text-stone-700">{fortune.luckyItems.item}</div>
                 </div>
              </div>
           </FortuneCard>
 
-          <FortuneCard title="今日幸运食物" icon="🥐" colorTheme="yellow" delay={750}>
-            <p className="font-bold text-lg mb-1 text-stone-800">{fortune.luckyFood.food}</p>
-            <p className="text-sm text-stone-600">😋 {fortune.luckyFood.reason}</p>
-          </FortuneCard>
-
-          <FortuneCard title="今日幸运动作" icon="🧘‍♀️" colorTheme="rose" delay={780}>
-            <p className="font-bold text-lg mb-1 text-stone-800">{fortune.luckyActivity.action}</p>
-            <p className="text-sm text-stone-600">✨ {fortune.luckyActivity.benefit}</p>
-          </FortuneCard>
-
-          <FortuneCard title="今日治愈影单" icon="🎬" colorTheme="purple" delay={800}>
-            <p className="font-bold text-lg mb-1 text-stone-800">《{fortune.dailyMovie.title}》</p>
-            <p className="text-sm text-stone-600">{fortune.dailyMovie.reason}</p>
-          </FortuneCard>
-
-          <FortuneCard title="今日能量BGM" icon="🎧" colorTheme="blue" delay={900}>
-            <div className="flex items-center mb-1">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-2 text-xs">🎵</div>
-              <div>
-                 <p className="font-bold text-base text-stone-800 leading-none">{fortune.dailyMusic.title}</p>
-                 <p className="text-xs text-stone-400">{fortune.dailyMusic.artist}</p>
-              </div>
+          <FortuneCard title="今日幸运食物" icon="🥐" colorTheme="yellow" delay={750} className="h-full">
+            <div className="flex flex-col h-full justify-center">
+              <p className="font-bold text-lg mb-2 text-stone-800">{fortune.luckyFood.food}</p>
+              <p className="text-sm text-stone-600">😋 {fortune.luckyFood.reason}</p>
             </div>
-            <p className="text-sm text-stone-600 mt-2">{fortune.dailyMusic.vibe}</p>
           </FortuneCard>
 
-          <FortuneCard title="今日合拍动物" icon="🐾" colorTheme="green" delay={950}>
-            <p className="font-bold text-lg mb-1 text-stone-800">{fortune.compatibleAnimal.animal}</p>
-            <p className="text-xs font-bold text-emerald-500 uppercase tracking-wider mb-2">{fortune.compatibleAnimal.trait}</p>
-            <p className="text-sm text-stone-600">{fortune.compatibleAnimal.reason}</p>
+          <FortuneCard title="今日幸运动作" icon="🧘‍♀️" colorTheme="rose" delay={780} className="h-full">
+            <div className="flex flex-col h-full justify-center">
+              <p className="font-bold text-lg mb-2 text-stone-800">{fortune.luckyActivity.action}</p>
+              <p className="text-sm text-stone-600">✨ {fortune.luckyActivity.benefit}</p>
+            </div>
+          </FortuneCard>
+
+          <FortuneCard title="今日治愈影单" icon="🎬" colorTheme="purple" delay={800} className="h-full">
+            <div className="flex flex-col h-full justify-center">
+              <p className="font-bold text-lg mb-2 text-stone-800">《{fortune.dailyMovie.title}》</p>
+              <p className="text-sm text-stone-600">{fortune.dailyMovie.reason}</p>
+            </div>
+          </FortuneCard>
+
+          <FortuneCard title="今日能量BGM" icon="🎧" colorTheme="blue" delay={900} className="h-full">
+            <div className="flex flex-col h-full justify-center">
+              <div className="flex items-center mb-2">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-2 text-xs shrink-0">🎵</div>
+                <div>
+                   <p className="font-bold text-base text-stone-800 leading-none">{fortune.dailyMusic.title}</p>
+                   <p className="text-xs text-stone-400">{fortune.dailyMusic.artist}</p>
+                </div>
+              </div>
+              <p className="text-sm text-stone-600">{fortune.dailyMusic.vibe}</p>
+            </div>
+          </FortuneCard>
+
+          <FortuneCard title="今日合拍动物" icon="🐾" colorTheme="green" delay={950} className="h-full">
+            <div className="flex flex-col h-full justify-center">
+              <p className="font-bold text-lg mb-1 text-stone-800">{fortune.compatibleAnimal.animal}</p>
+              <p className="text-xs font-bold text-emerald-500 uppercase tracking-wider mb-2">{fortune.compatibleAnimal.trait}</p>
+              <p className="text-sm text-stone-600">{fortune.compatibleAnimal.reason}</p>
+            </div>
           </FortuneCard>
 
         </div>

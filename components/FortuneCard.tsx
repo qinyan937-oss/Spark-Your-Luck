@@ -7,9 +7,10 @@ interface FortuneCardProps {
   colorTheme: 'orange' | 'rose' | 'purple' | 'yellow' | 'blue' | 'green';
   children: React.ReactNode;
   delay?: number;
+  className?: string; // Added prop for custom classes
 }
 
-const FortuneCard: React.FC<FortuneCardProps> = ({ title, icon, colorTheme, children, delay = 0 }) => {
+const FortuneCard: React.FC<FortuneCardProps> = ({ title, icon, colorTheme, children, delay = 0, className = '' }) => {
   const colorClasses = {
     orange: 'bg-orange-100 text-orange-800 border-orange-200',
     rose: 'bg-rose-100 text-rose-800 border-rose-200',
@@ -30,14 +31,14 @@ const FortuneCard: React.FC<FortuneCardProps> = ({ title, icon, colorTheme, chil
 
   return (
     <div 
-      className={`bg-white rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-500 transform opacity-0 animate-fade-in-up ${borderClasses[colorTheme]}`}
+      className={`bg-white rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-500 transform opacity-0 animate-fade-in-up ${borderClasses[colorTheme]} ${className}`}
       style={{ animationDelay: `${delay}ms`, animationFillMode: 'forwards' }}
     >
       <div className="flex items-center mb-4">
         <span className="text-3xl mr-3">{icon}</span>
         <h3 className={`text-xl font-bold ${colorClasses[colorTheme].split(' ')[1]}`}>{title}</h3>
       </div>
-      <div className="text-stone-600 leading-relaxed">
+      <div className="text-stone-600 leading-relaxed h-full">
         {children}
       </div>
     </div>

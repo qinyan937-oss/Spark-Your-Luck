@@ -57,6 +57,39 @@ const getChineseZodiacData = (year: number) => {
   };
 };
 
+// Life Path Number Calculation (Numerology)
+const calculateLifePathNumber = (birthDate: string): { number: string; meaning: string } => {
+  const digits = birthDate.replace(/\D/g, '').split('').map(Number);
+  let sum = digits.reduce((a, b) => a + b, 0);
+
+  // Reduce to single digit (1-9) or Master Numbers (11, 22, 33)
+  // Simplified logic: keep reducing until <= 9 unless it's 11, 22, 33
+  while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+    sum = String(sum).split('').map(Number).reduce((a, b) => a + b, 0);
+  }
+
+  const numStr = String(sum);
+  const meanings: Record<string, string> = {
+    "1": "开创与领导",
+    "2": "平衡与敏感",
+    "3": "表达与创意",
+    "4": "稳定与秩序",
+    "5": "自由与冒险",
+    "6": "关怀与责任",
+    "7": "真理与智慧",
+    "8": "力量与丰盛",
+    "9": "人道与大爱",
+    "11": "灵性启蒙 (卓越数)",
+    "22": "梦想成真 (卓越数)",
+    "33": "无私奉献 (卓越数)"
+  };
+
+  return { 
+    number: numStr, 
+    meaning: meanings[numStr] || "神秘能量" 
+  };
+};
+
 const getRandom = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 const getRandomSubset = <T>(arr: T[], count: number): T[] => {
   const shuffled = [...arr].sort(() => 0.5 - Math.random());
@@ -69,21 +102,38 @@ const LOCAL_TAROT = [
   { cardName: "力量", meaning: "温柔而坚定的勇气", advice: "相信你内心的力量。" },
   { cardName: "星星", meaning: "希望与治愈", advice: "保持乐观，愿望即将实现。" },
   { cardName: "命运之轮", meaning: "幸运的转折点", advice: "好运正在向你转动。" },
-  { cardName: "女皇", meaning: "丰盛与爱", advice: "尽情享受生活的美好吧。" }
+  { cardName: "女皇", meaning: "丰盛与爱", advice: "尽情享受生活的美好吧。" },
+  { cardName: "世界", meaning: "圆满与达成", advice: "你的一个重要阶段即将完美收官。" },
+  { cardName: "愚人", meaning: "新的开始", advice: "保持赤子之心，勇敢迈出第一步。" },
+  { cardName: "魔术师", meaning: "无限潜能", advice: "你拥有一切实现梦想所需的资源。" },
+  { cardName: "恋人", meaning: "和谐与选择", advice: "跟随心的指引，做出爱的选择。" },
+  { cardName: "战车", meaning: "胜利与意志", advice: "只要坚持，你就一定能赢。" }
 ];
 
 const LOCAL_FOODS = [
   { food: "热奶茶", reason: "甜甜的温度暖胃又暖心。" },
   { food: "鲜草莓", reason: "红色的果实带来满满元气。" },
   { food: "牛角包", reason: "酥脆的口感治愈一切小情绪。" },
-  { food: "热汤面", reason: "碳水带来的快乐最实在。" }
+  { food: "热汤面", reason: "碳水带来的快乐最实在。" },
+  { food: "提拉米苏", reason: "那是带我走的浪漫味道。" },
+  { food: "烤红薯", reason: "手心里的温暖是冬日限定的小确幸。" },
+  { food: "寿司拼盘", reason: "精致的搭配让心情也变得丰富多彩。" },
+  { food: "水果沙拉", reason: "清爽的维生素是身体最喜欢的礼物。" },
+  { food: "巧克力", reason: "丝滑的口感是给大脑的甜蜜拥抱。" },
+  { food: "关东煮", reason: "热气腾腾的汤底治愈深夜的疲惫。" }
 ];
 
 const LOCAL_ACTIVITIES = [
   { action: "深呼吸", benefit: "吸入好运，呼出烦恼。" },
   { action: "晒太阳", benefit: "补充天然的光合作用能量。" },
   { action: "整理桌面", benefit: "理清思绪，迎接新灵感。" },
-  { action: "听雨声", benefit: "感受大自然的白噪音疗愈。" }
+  { action: "听雨声", benefit: "感受大自然的白噪音疗愈。" },
+  { action: "写日记", benefit: "记录下每一个闪光的瞬间。" },
+  { action: "泡个澡", benefit: "洗去一身疲惫，重获新生。" },
+  { action: "读首诗", benefit: "让灵魂在文字里短暂栖息。" },
+  { action: "看云彩", benefit: "想象力是治愈无聊的最佳解药。" },
+  { action: "伸懒腰", benefit: "舒展身体，激活满满的活力。" },
+  { action: "给花浇水", benefit: "见证生命生长的微小喜悦。" }
 ];
 
 const LOCAL_CELEBS: CelebrityMatch[] = [
@@ -93,7 +143,23 @@ const LOCAL_CELEBS: CelebrityMatch[] = [
   { name: "小王子", desc: "星际旅人", reason: "保持着纯真，能看懂本质。", romanticVibe: "纯真守护" },
   { name: "霉霉 (Taylor Swift)", desc: "才华天后", reason: "在爱与被爱中勇敢做自己。", romanticVibe: "闪耀拍档" },
   { name: "王嘉尔", desc: "热情骑士", reason: "真诚热烈的性格一拍即合。", romanticVibe: "活力满分" },
-  { name: "刘亦菲", desc: "人间仙女", reason: "淡然处世的智慧不谋而合。", romanticVibe: "清醒独立" }
+  { name: "刘亦菲", desc: "人间仙女", reason: "淡然处世的智慧不谋而合。", romanticVibe: "清醒独立" },
+  { name: "易烊千玺", desc: "沉稳少年", reason: "内心的丰富世界只有你们懂。", romanticVibe: "静谧默契" },
+  { name: "Lisa", desc: "人间芭比", reason: "阳光自信的笑容会互相感染。", romanticVibe: "快乐源泉" },
+  { name: "胡歌", desc: "温润君子", reason: "历经千帆归来仍是少年的赤诚。", romanticVibe: "知己之交" }
+];
+
+const LOCAL_MANSIONS = [
+  { starName: "角木蛟", guidance: "如龙潜深渊，积蓄力量待时而动。" },
+  { starName: "亢金龙", guidance: "刚柔并济，你的正直是最大的护身符。" },
+  { starName: "心月狐", guidance: "灵动聪慧，直觉会指引你找到答案。" },
+  { starName: "房日兔", guidance: "温顺善良，好人缘会为你带来贵人。" },
+  { starName: "参水猿", guidance: "才华横溢，今日宜展示你的独特才艺。" },
+  { starName: "井木犴", guidance: "由于条理清晰，适合处理复杂的难题。" },
+  { starName: "奎木狼", guidance: "勇往直前，你的魄力能打破一切僵局。" },
+  { starName: "娄金狗", guidance: "忠诚可靠，你的付出终将被温柔以待。" },
+  { starName: "胃土雉", guidance: "沉稳务实，一步一个脚印便是捷径。" },
+  { starName: "昴日鸡", guidance: "名声大噪，今日你的光芒无法被遮挡。" }
 ];
 
 const generateLocalFortune = (profile: UserProfile): FortuneResult => {
@@ -104,6 +170,8 @@ const generateLocalFortune = (profile: UserProfile): FortuneResult => {
 
   const zodiac = getZodiacData(month, day);
   const cZodiac = getChineseZodiacData(year);
+  const lifePath = calculateLifePathNumber(profile.birthDate);
+  const mansion = getRandom(LOCAL_MANSIONS);
 
   return {
     isFallback: true,
@@ -126,12 +194,12 @@ const generateLocalFortune = (profile: UserProfile): FortuneResult => {
       socialVibe: "治愈系小天使"
     },
     constellation: {
-      starName: "织女一 (Vega)",
-      guidance: "像夏夜最亮的星一样坚定闪耀。"
+      starName: mansion.starName,
+      guidance: mansion.guidance
     },
     luckyItems: {
       color: "奶油黄",
-      number: String(Math.floor(Math.random() * 9) + 1),
+      number: lifePath.number, // Use real numerology
       item: "水晶手链"
     },
     celebrityMatch: getRandomSubset(LOCAL_CELEBS, 5),
@@ -175,7 +243,9 @@ export const generateFortuneReport = async (profile: UserProfile): Promise<Fortu
     CORE DIRECTIVE:
     You must act as an expert Astrologer and Fortune Teller. 
     You MUST calculate the accurate Zodiac Sign (Sun Sign) and Chinese Zodiac (Animal) based on the user's specific Birth Date provided. DO NOT guess or randomize this. 
-    Example: If birth date is 1990-01-28, User is Aquarius (Zodiac) and Horse (Chinese Zodiac).
+    
+    **Numerology Requirement**:
+    Calculate the user's "Life Path Number" based on their full birth date (YYYY-MM-DD) and use this as the 'luckyItems.number'. Provide a short meaning if possible in the context.
     
     The analysis must be strictly personalized to this birth date's astrological chart interacting with TODAY's energy.
     
@@ -190,6 +260,7 @@ export const generateFortuneReport = async (profile: UserProfile): Promise<Fortu
     8. For Lucky Activity, suggest simple, FREE, non-consumerist actions (e.g., "Look at the sky").
     9. For "Celebrity Match", GENERATE 5 DIFFERENT MATCHES. Select celebrities who have compatible Zodiac signs or vibes with the user.
     10. CRITICAL FOR ASTRAL CHART: You MUST mention specific, REAL Astrological Aspects (e.g., Sun Trine Jupiter, Moon in 5th House) that are plausible for their chart or current transits. Explain how this specific energy empowers them.
+    11. For 'constellation', use CHINESE 28 MANSIONS (二十八星宿) like '角木蛟', '心月狐', not Western constellations.
   `;
 
   const prompt = `
@@ -199,12 +270,13 @@ export const generateFortuneReport = async (profile: UserProfile): Promise<Fortu
     MBTI: ${profile.mbti || "Unknown (please intuit based on birthday)"}
 
     Task:
-    1. First, accurately determine the Zodiac Sign and Chinese Zodiac for ${profile.birthDate}.
+    1. Determine Zodiac Sign, Chinese Zodiac, and Life Path Number.
     2. Analyze the current astrological energy for this specific person.
     3. Generate a JSON object containing a comprehensive positive analysis.
     
     CRITICAL: The 'celebrityMatch' field must be an ARRAY of 5 different objects.
-    CRITICAL: In 'astralChart', provide 'keyAspect' (e.g. 'Sun Trine Jupiter') and 'luckyHouse' (e.g. '11th House') relevant to this person.
+    CRITICAL: In 'astralChart', provide 'keyAspect' and 'luckyHouse'.
+    CRITICAL: In 'constellation', return a Chinese Lunar Mansion name.
   `;
 
   try {
@@ -266,7 +338,7 @@ export const generateFortuneReport = async (profile: UserProfile): Promise<Fortu
             constellation: {
               type: Type.OBJECT,
               properties: {
-                starName: { type: Type.STRING, description: "A lucky star or constellation" },
+                starName: { type: Type.STRING, description: "Chinese Lunar Mansion (e.g. 心月狐)" },
                 guidance: { type: Type.STRING },
               },
               required: ["starName", "guidance"],
@@ -275,7 +347,7 @@ export const generateFortuneReport = async (profile: UserProfile): Promise<Fortu
               type: Type.OBJECT,
               properties: {
                 color: { type: Type.STRING },
-                number: { type: Type.STRING },
+                number: { type: Type.STRING, description: "Calculated Life Path Number" },
                 item: { type: Type.STRING },
               },
               required: ["color", "number", "item"],

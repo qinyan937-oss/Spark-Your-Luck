@@ -23,6 +23,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
   const [isSaving, setIsSaving] = useState(false);
   const dashboardRef = useRef<HTMLDivElement>(null);
 
+  // Tarot Flip State
+  const [isTarotFlipped, setIsTarotFlipped] = useState(false);
+
   // Fallback Detection Effect
   useEffect(() => {
     if (fortune.isFallback) {
@@ -55,6 +58,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
     audio.playSparkle();
     if (navigator.vibrate) navigator.vibrate([10, 30]);
     // Visual only for now, could save to favorites later
+  };
+
+  const handleTarotFlip = () => {
+    if (!isTarotFlipped) {
+      audio.playSwoosh();
+      if (navigator.vibrate) navigator.vibrate(20);
+      setIsTarotFlipped(true);
+    }
   };
 
   const handleShare = async () => {
@@ -172,7 +183,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
   };
 
   return (
-    <div className="min-h-screen pb-24 px-4 pt-8 md:px-8 max-w-7xl mx-auto">
+    <div className="min-h-screen pb-24 px-4 pt-8 md:px-8 max-w-7xl mx-auto relative">
       {/* Toast Notification */}
       <div className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 w-full max-w-md px-4 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`}>
         <div className="bg-stone-800/95 backdrop-blur text-white px-6 py-4 rounded-2xl shadow-xl flex items-start md:items-center border border-stone-700">
@@ -186,6 +197,24 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
         ref={dashboardRef} 
         className="bg-warm-plaid relative -mx-4 px-4 py-8 md:p-8 md:rounded-[2.5rem] overflow-hidden"
       >
+        {/* Floating Ambient Particles (CSS Animation) */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" data-html2canvas-ignore="true">
+           {[...Array(12)].map((_, i) => (
+             <div 
+               key={i} 
+               className="particle"
+               style={{
+                 left: `${Math.random() * 100}%`,
+                 top: '110%',
+                 width: `${Math.random() * 8 + 4}px`,
+                 height: `${Math.random() * 8 + 4}px`,
+                 animationDelay: `${Math.random() * 5}s`,
+                 animationDuration: `${10 + Math.random() * 10}s`
+               }}
+             />
+           ))}
+        </div>
+
         {/* Header Section */}
         <header className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4 relative z-10">
           <div className="text-center md:text-left">
@@ -366,7 +395,39 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
              </div>
           </div>
 
-          {/* Other Cards */}
+          {/* Tarot Flip Card */}
+          <div className="perspective-1000 h-full w-full" onClick={handleTarotFlip}>
+             <div className={`relative w-full h-full transition-all duration-700 transform-style-3d cursor-pointer ${isTarotFlipped ? 'rotate-y-180' : ''}`}>
+                
+                {/* Front (Hidden initially) - The Content */}
+                <div className="rotate-y-180 h-full w-full backface-hidden">
+                   <FortuneCard title="今日幸运塔罗" icon="🃏" colorTheme="purple" delay={400}>
+                      <div className="flex items-start">
+                         <div className="flex-1">
+                            <p className="font-bold text-lg text-purple-700 mb-1">{fortune.tarot.cardName}</p>
+                            <p className="text-sm italic mb-2">"{fortune.tarot.meaning}"</p>
+                            <p className="text-xs bg-purple-50 p-2 rounded-lg text-purple-600">💡 指引: {fortune.tarot.advice}</p>
+                         </div>
+                      </div>
+                   </FortuneCard>
+                </div>
+
+                {/* Back (Visible initially) - The Card Back */}
+                <div className="absolute inset-0 backface-hidden h-full w-full">
+                   <div className="bg-purple-900 h-full rounded-3xl p-6 shadow-md border-4 border-purple-300 flex flex-col items-center justify-center text-purple-200 relative overflow-hidden group hover:scale-[1.02] transition-transform">
+                      {/* Mystic Pattern */}
+                      <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, #d8b4fe 1px, transparent 1px)', backgroundSize: '10px 10px' }}></div>
+                      <div className="w-24 h-32 border-2 border-purple-400 rounded-lg flex items-center justify-center mb-2 z-10 bg-purple-800/50 backdrop-blur-sm">
+                         <span className="text-4xl animate-pulse">🔮</span>
+                      </div>
+                      <p className="text-sm font-bold tracking-widest z-10">点击翻牌</p>
+                      <p className="text-[10px] text-purple-400 mt-1 z-10">接收宇宙指引</p>
+                   </div>
+                </div>
+
+             </div>
+          </div>
+
           <FortuneCard title={`${fortune.zodiac.sign}的好运`} icon="🌟" colorTheme="orange" delay={200}>
             <p className="font-bold text-lg mb-1">{fortune.zodiac.luckyTrait}</p>
             <p className="text-sm mb-3">{fortune.zodiac.compliment}</p>
@@ -377,22 +438,12 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
             <p className="text-sm">{fortune.chineseZodiac.compliment}</p>
           </FortuneCard>
 
-          <FortuneCard title="今日幸运塔罗" icon="🃏" colorTheme="purple" delay={400}>
-            <div className="flex items-start">
-               <div className="flex-1">
-                  <p className="font-bold text-lg text-purple-700 mb-1">{fortune.tarot.cardName}</p>
-                  <p className="text-sm italic mb-2">"{fortune.tarot.meaning}"</p>
-                  <p className="text-xs bg-purple-50 p-2 rounded-lg text-purple-600">💡 指引: {fortune.tarot.advice}</p>
-               </div>
-            </div>
-          </FortuneCard>
-
           <FortuneCard title={`人格魅力 (${fortune.mbtiAnalysis.type})`} icon="🧠" colorTheme="blue" delay={500}>
             <p className="font-bold text-lg mb-1">天赋：{fortune.mbtiAnalysis.superpower}</p>
             <p className="text-sm">{fortune.mbtiAnalysis.socialVibe}</p>
           </FortuneCard>
 
-          <FortuneCard title="守护星宿" icon="🌌" colorTheme="yellow" delay={600}>
+          <FortuneCard title="本命星宿" icon="🌌" colorTheme="yellow" delay={600}>
             <p className="font-bold text-lg mb-1">{fortune.constellation.starName}</p>
             <p className="text-sm">{fortune.constellation.guidance}</p>
           </FortuneCard>
@@ -403,9 +454,11 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
                    <div className="text-xs text-stone-400">颜色</div>
                    <div className="font-bold text-stone-700">{fortune.luckyItems.color}</div>
                 </div>
-                <div className="bg-orange-50 p-2 rounded-xl">
-                   <div className="text-xs text-stone-400">数字</div>
-                   <div className="font-bold text-stone-700">{fortune.luckyItems.number}</div>
+                <div className="bg-orange-50 p-2 rounded-xl flex flex-col justify-center">
+                   <div className="text-xs text-stone-400 mb-0.5">生命灵数</div>
+                   <div className="font-bold text-stone-800 text-xl leading-none">{fortune.luckyItems.number}</div>
+                   {/* Fallback meaning logic if API didn't provide one (local engine does) */}
+                   <div className="text-[10px] text-orange-400 scale-90 origin-center mt-1 font-medium">命定能量</div>
                 </div>
                 <div className="bg-orange-50 p-2 rounded-xl">
                    <div className="text-xs text-stone-400">小物</div>

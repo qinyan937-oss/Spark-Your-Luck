@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
   <head>
@@ -44,6 +45,7 @@
               'blob': 'blob 7s infinite',
               'flash': 'flash 1.5s ease-out forwards',
               'wiggle': 'wiggle 1s ease-in-out infinite',
+              'fade-in': 'fade-in 1s ease-out forwards',
             },
             keyframes: {
               float: {
@@ -64,6 +66,10 @@
               wiggle: {
                 '0%, 100%': { transform: 'rotate(-3deg)' },
                 '50%': { transform: 'rotate(3deg)' },
+              },
+              'fade-in': {
+                'from': { opacity: 0 },
+                'to': { opacity: 1 }
               }
             }
           },
@@ -90,6 +96,36 @@
           linear-gradient(rgba(251, 146, 60, 0.1) 1px, transparent 1px),
           linear-gradient(90deg, rgba(251, 146, 60, 0.1) 1px, transparent 1px);
         background-size: 20px 20px;
+      }
+      
+      /* 3D Flip Card Styles */
+      .perspective-1000 {
+        perspective: 1000px;
+      }
+      .transform-style-3d {
+        transform-style: preserve-3d;
+      }
+      .backface-hidden {
+        backface-visibility: hidden;
+      }
+      .rotate-y-180 {
+        transform: rotateY(180deg);
+      }
+
+      /* Ambient Particles */
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+        pointer-events: none;
+        animation: float-particle linear infinite;
+      }
+      @keyframes float-particle {
+        0% { transform: translateY(0) translateX(0); opacity: 0; }
+        20% { opacity: 0.8; }
+        80% { opacity: 0.8; }
+        100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
       }
     </style>
   <script type="importmap">

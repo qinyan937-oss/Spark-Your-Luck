@@ -50,7 +50,22 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
 
   const handleShare = async () => {
     audio.playPop();
-    const shareText = `✨ 幸运点点 · 今日好运投递 📨\n\n👤 ${user.name} 的专属能量报告：\n\n🌞 能量金句：${fortune.dailyAffirmation}\n💖 今日最配：${currentMatch.name} (${currentMatch.romanticVibe})\n🔮 星盘相位：${fortune.astralChart.keyAspect}\n🥑 幸运食物：${fortune.luckyFood.food}\n\n👇 领取你的专属好运（这里充满正能量哦）：\n${window.location.href}`;
+
+    // 1. Random "Lucky Hook" phrases to make sharing more fun
+    const luckyHooks = [
+      "你今天的运气好像开了挂！🚀",
+      "全宇宙的星星都在为你眨眼睛 ✨",
+      "检测到你的快乐指数正在飙升 📈",
+      "今日运势：宜快乐，宜暴富，宜被爱 💖",
+      "这是什么神仙运气呀？😍",
+      "快来看，这里有一份满分好运试卷 💯",
+      "滴！你有一份来自宇宙的快递请查收 📦",
+      "没想到吧，好运竟然藏在这里！🎉"
+    ];
+    const randomHook = luckyHooks[Math.floor(Math.random() * luckyHooks.length)];
+
+    // 2. Construct the personalized share text
+    const shareText = `✨ 幸运点点 · 好运投递 📨\n\n${randomHook}\n\n👤 捕捉到一只正在发光的 ${user.name} ：\n\n🌞 能量金句：${fortune.dailyAffirmation}\n💘 今日最配：${currentMatch.name} (${currentMatch.romanticVibe})\n🔮 宇宙信号：${fortune.astralChart.keyAspect}\n🥑 治愈时刻：${fortune.luckyFood.food}\n\n👇 点击链接，领取你的专属好运（真的很准哦）：\n${window.location.href}`;
 
     if (navigator.share) {
       try {
@@ -75,7 +90,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
       if (isPreview) {
         setToastMessage("已复制！⚠️ 这是预览链接，请先点击右上角「部署」发布后，朋友才能访问哦！");
       } else {
-        setToastMessage("好运文案已复制，快去分享吧！");
+        setToastMessage("好运文案已复制，快去分享吧！✨");
       }
       setShowToast(true);
       setTimeout(() => setShowToast(false), 4000);
@@ -152,8 +167,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
       {/* Toast Notification */}
       <div className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 w-full max-w-md px-4 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`}>
         <div className="bg-stone-800/95 backdrop-blur text-white px-6 py-4 rounded-2xl shadow-xl flex items-start md:items-center border border-stone-700">
-          <span className="mr-3 text-xl">{isSaving ? '📸' : '📋'}</span>
-          <span className="text-sm md:text-base leading-tight">{toastMessage}</span>
+          <span className="mr-3 text-xl">{isSaving ? '📸' : '✨'}</span>
+          <span className="text-sm md:text-base leading-tight whitespace-pre-wrap">{toastMessage}</span>
         </div>
       </div>
 

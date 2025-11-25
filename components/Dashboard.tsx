@@ -23,6 +23,15 @@ const Dashboard: React.FC<DashboardProps> = ({ user, fortune, onReset }) => {
   const [isSaving, setIsSaving] = useState(false);
   const dashboardRef = useRef<HTMLDivElement>(null);
 
+  // Fallback Detection Effect
+  useEffect(() => {
+    if (fortune.isFallback) {
+      setToastMessage("🔮 网络开小差了，已为您切换到基础星盘模式 (结果依然准确哦)");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 5000);
+    }
+  }, [fortune.isFallback]);
+
   // Celebrity Match Swiping State
   const [matchIndex, setMatchIndex] = useState(0);
   const [swipeDirection, setSwipeDirection] = useState<'right' | 'left' | null>(null);

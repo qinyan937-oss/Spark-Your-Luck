@@ -13,6 +13,7 @@ export interface CelebrityMatch {
 }
 
 export interface FortuneResult {
+  isFallback?: boolean; // New flag to indicate local calculation
   zodiac: {
     sign: string;
     luckyTrait: string;

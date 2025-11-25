@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useRef } from 'react';
 import { UserProfile } from '../types';
 
 interface WelcomeScreenProps {
@@ -15,6 +16,10 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
   
   const [mbti, setMbti] = useState('');
 
+  // Refs for auto-focus navigation
+  const monthInputRef = useRef<HTMLInputElement>(null);
+  const dayInputRef = useRef<HTMLInputElement>(null);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name && year && month && day) {
@@ -27,10 +32,19 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
     }
   };
 
-  // Helper to allow only numbers and limit length
-  const handleNumberChange = (setter: (val: string) => void, limit: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Helper to allow only numbers, limit length, and auto-focus next field
+  const handleNumberChange = (
+    setter: (val: string) => void, 
+    limit: number,
+    nextRef?: React.RefObject<HTMLInputElement>
+  ) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/\D/g, '').slice(0, limit);
     setter(val);
+
+    // Auto-focus next input if limit reached
+    if (val.length === limit && nextRef && nextRef.current) {
+      nextRef.current.focus();
+    }
   };
 
   return (
@@ -71,9 +85,10 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
                 <input
                   type="tel"
                   required
+                  maxLength={4}
                   placeholder="2000"
                   value={year}
-                  onChange={handleNumberChange(setYear, 4)}
+                  onChange={handleNumberChange(setYear, 4, monthInputRef)}
                   className="w-full px-4 py-3 rounded-2xl bg-orange-50 border-2 border-orange-100 focus:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all text-stone-700 text-center placeholder-stone-300"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none bg-orange-50 pl-1">年</span>
@@ -82,11 +97,13 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
               {/* Month Input */}
               <div className="relative flex-1">
                 <input
+                  ref={monthInputRef}
                   type="tel"
                   required
+                  maxLength={2}
                   placeholder="01"
                   value={month}
-                  onChange={handleNumberChange(setMonth, 2)}
+                  onChange={handleNumberChange(setMonth, 2, dayInputRef)}
                   className="w-full px-2 py-3 rounded-2xl bg-orange-50 border-2 border-orange-100 focus:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-100 transition-all text-stone-700 text-center placeholder-stone-300"
                 />
                 <span className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none bg-orange-50 pl-1">月</span>
@@ -95,8 +112,10 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
               {/* Day Input */}
               <div className="relative flex-1">
                 <input
+                  ref={dayInputRef}
                   type="tel"
                   required
+                  maxLength={2}
                   placeholder="01"
                   value={day}
                   onChange={handleNumberChange(setDay, 2)}
